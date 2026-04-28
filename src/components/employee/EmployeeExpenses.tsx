@@ -170,7 +170,7 @@ export default function EmployeeExpenses() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-slate-800">{exp.description}</p>
-                      <p className="text-xs text-slate-400 mt-1 capitalize font-medium">{exp.type} {exp.billFile ? '• Bill Attached' : ''}</p>
+                      <p className="text-xs text-slate-400 mt-1 capitalize font-medium">{exp.type} • {formatDate(exp.appliedOn)} {exp.billFile ? '• Bill Attached' : ''}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -187,4 +187,10 @@ export default function EmployeeExpenses() {
       )}
     </div>
   );
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${d}-${m}-${y}`;
 }

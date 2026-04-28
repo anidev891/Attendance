@@ -120,7 +120,7 @@ export default function EmployeeWfh() {
                     <p className="text-sm font-semibold text-slate-800">{req.reason}</p>
                     <p className="text-xs text-slate-400 mt-2 font-medium flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      {req.date}
+                      {formatDate(req.date)}
                     </p>
                   </div>
                   <span className={`text-[10px] font-black px-2.5 py-1 rounded-full border uppercase tracking-wider ${statusColor(req.status)}`}>

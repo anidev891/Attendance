@@ -74,7 +74,7 @@ export default function AdminWfhApprovals() {
                   <div>
                     <p className="text-sm font-medium text-slate-800">{req.employeeName}</p>
                     <p className="text-sm text-slate-600 mt-1">{req.reason}</p>
-                    <p className="text-xs text-slate-400 mt-1">{req.date}</p>
+                    <p className="text-xs text-slate-400 mt-1">{formatDate(req.date)}</p>
                     <p className="text-xs text-blue-500 mt-1 italic">Approved WFH disables location restriction for this employee</p>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 shrink-0">
@@ -133,7 +133,7 @@ export default function AdminWfhApprovals() {
                   {history.map(req => (
                     <tr key={req.id} className="hover:bg-slate-50 transition-colors">
                       <td className="px-4 py-3 text-sm text-slate-800">{req.employeeName}</td>
-                      <td className="px-4 py-3 text-sm text-slate-600 hidden sm:table-cell">{req.date}</td>
+                      <td className="px-4 py-3 text-sm text-slate-600 hidden sm:table-cell">{formatDate(req.date)}</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                           req.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
@@ -151,4 +151,10 @@ export default function AdminWfhApprovals() {
       )}
     </div>
   );
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${d}-${m}-${y}`;
 }

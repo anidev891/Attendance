@@ -200,6 +200,7 @@ export default function AdminExpenseReport() {
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Type</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Amount</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell">Description</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Date</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
               </tr>
             </thead>
@@ -210,6 +211,7 @@ export default function AdminExpenseReport() {
                   <td className="px-4 py-3 text-sm text-slate-600 capitalize hidden sm:table-cell">{exp.type}</td>
                   <td className="px-4 py-3 text-sm font-medium text-slate-800">{RUPEE}{exp.amount.toLocaleString()}</td>
                   <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell max-w-[200px] truncate">{exp.description}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600">{formatDate(exp.appliedOn)}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${statusColors[exp.status]}`}>
                       {exp.status}
@@ -226,4 +228,10 @@ export default function AdminExpenseReport() {
       </div>
     </div>
   );
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${d}-${m}-${y}`;
 }

@@ -236,7 +236,7 @@ export default function EmployeeLeave() {
                     <p className="text-sm text-slate-800 mt-1 font-semibold">{leave.reason}</p>
                     <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      {leave.startDate} to {leave.endDate}
+                      {formatDate(leave.startDate)} to {formatDate(leave.endDate)}
                     </p>
                   </div>
                   <span className={`text-[10px] font-black px-2.5 py-1 rounded-full border uppercase tracking-wider ${statusColor(leave.status)}`}>
@@ -250,4 +250,10 @@ export default function EmployeeLeave() {
       )}
     </div>
   );
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${d}-${m}-${y}`;
 }

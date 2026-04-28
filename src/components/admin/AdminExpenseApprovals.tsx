@@ -50,9 +50,12 @@ export default function AdminExpenseApprovals() {
                     <p className="text-sm font-medium text-slate-800">{exp.employeeName}</p>
                     <p className="text-xs text-slate-400 capitalize mt-0.5">{exp.type} Expense</p>
                     <p className="text-sm text-slate-600 mt-2">{exp.description}</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <IndianRupee className="w-3 h-3 text-slate-400" />
-                      <span className="text-sm font-semibold text-slate-800">{exp.amount.toLocaleString()}</span>
+                    <div className="flex items-center gap-4 mt-1">
+                      <div className="flex items-center gap-1">
+                        <IndianRupee className="w-3 h-3 text-slate-400" />
+                        <span className="text-sm font-semibold text-slate-800">{exp.amount.toLocaleString()}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-medium">Applied on: {formatDate(exp.appliedOn)}</span>
                     </div>
                     {exp.billFile && (
                       <p className="text-xs text-emerald-600 mt-1">Bill: {exp.billFile}</p>
@@ -92,6 +95,7 @@ export default function AdminExpenseApprovals() {
                     <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Employee</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Type</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Amount</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Date</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
                   </tr>
                 </thead>
@@ -101,6 +105,7 @@ export default function AdminExpenseApprovals() {
                       <td className="px-4 py-3 text-sm text-slate-800">{exp.employeeName}</td>
                       <td className="px-4 py-3 text-sm text-slate-600 capitalize hidden sm:table-cell">{exp.type}</td>
                       <td className="px-4 py-3 text-sm font-medium text-slate-800">₹{exp.amount.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-sm text-slate-600">{formatDate(exp.appliedOn)}</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                           exp.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
@@ -118,4 +123,10 @@ export default function AdminExpenseApprovals() {
       )}
     </div>
   );
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${d}-${m}-${y}`;
 }

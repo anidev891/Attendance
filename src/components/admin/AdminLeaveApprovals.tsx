@@ -50,7 +50,7 @@ export default function AdminLeaveApprovals() {
                     <p className="text-sm font-medium text-slate-800">{leave.employeeName}</p>
                     <p className="text-xs text-slate-400 mt-0.5 capitalize">{leave.type} Leave</p>
                     <p className="text-sm text-slate-600 mt-2">{leave.reason}</p>
-                    <p className="text-xs text-slate-400 mt-1">{leave.startDate} to {leave.endDate}</p>
+                    <p className="text-xs text-slate-400 mt-1">{formatDate(leave.startDate)} to {formatDate(leave.endDate)}</p>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 shrink-0">
                     <button
@@ -94,7 +94,7 @@ export default function AdminLeaveApprovals() {
                     <tr key={leave.id} className="hover:bg-slate-50 transition-colors">
                       <td className="px-4 py-3 text-sm text-slate-800">{leave.employeeName}</td>
                       <td className="px-4 py-3 text-sm text-slate-600 capitalize hidden sm:table-cell">{leave.type}</td>
-                      <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">{leave.startDate} - {leave.endDate}</td>
+                      <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">{formatDate(leave.startDate)} - {formatDate(leave.endDate)}</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                           leave.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
@@ -112,4 +112,10 @@ export default function AdminLeaveApprovals() {
       )}
     </div>
   );
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${d}-${m}-${y}`;
 }
