@@ -135,3 +135,9 @@ export default function EmployeeWfh() {
     </div>
   );
 }
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${d}-${m}-${y}`;
+}
