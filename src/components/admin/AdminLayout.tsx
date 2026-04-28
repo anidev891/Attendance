@@ -5,6 +5,7 @@ import {
   LayoutDashboard, Users, CalendarOff, Laptop, Receipt,
   FileBarChart, LogOut, Menu, X, ChevronDown, ChevronRight, Shield, Settings
 } from 'lucide-react';
+import adminMainBG from '../../assets/bgp.png';
 import type { AdminSection } from '../../types';
 
 interface MenuItem {
@@ -80,11 +81,10 @@ export default function AdminLayout() {
             <button
               key={item.id}
               onClick={() => handleNav(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                isActive
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
                   ? 'bg-emerald-500/20 text-emerald-400'
                   : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
-              }`}
+                }`}
             >
               <Icon className="w-4 h-4" />
               {item.label}
@@ -110,11 +110,10 @@ export default function AdminLayout() {
                     <button
                       key={item.id}
                       onClick={() => handleNav(item.id)}
-                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all ${
-                        isActive
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all ${isActive
                           ? 'bg-emerald-500/20 text-emerald-400 font-medium'
                           : 'text-slate-400 hover:text-white hover:bg-slate-700/50 pl-6'
-                      }`}
+                        }`}
                     >
                       <Icon className="w-4 h-4" />
                       {item.label}
@@ -140,41 +139,46 @@ export default function AdminLayout() {
   );
 
   return (
-    <div className="h-screen bg-slate-50 flex overflow-hidden">
-      <aside className="hidden lg:flex w-64 bg-slate-800 flex-col shrink-0">
+    <div className="fixed inset-0 flex overflow-hidden select-none bg-slate-50/50">
+      {/* Fixed Background Layer */}
+      <div
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${adminMainBG})` }}
+      />
+      <div className="fixed inset-0 z-0 bg-indigo-100/40" />
+
+      {/* Sidebar - Fixed on Desktop */}
+      <aside className="hidden lg:flex w-64 bg-slate-950 border-r border-indigo-900/50 flex-col shrink-0 relative z-40 h-full shadow-2xl select-none">
         {sidebar}
       </aside>
 
       {sidebarOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
-          <aside className="relative w-72 h-full bg-slate-800 shadow-xl">
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="absolute top-3 right-3 p-1 text-slate-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <aside className="fixed inset-y-0 left-0 w-64 bg-slate-950 flex flex-col z-50 animate-in slide-in-from-left duration-300">
             {sidebar}
           </aside>
         </div>
       )}
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white border-b border-slate-200 px-4 lg:px-6 py-3 flex items-center gap-3 sticky top-0 z-10">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 h-full relative z-10 bg-indigo-50/30">
+        <header className="bg-white/95 backdrop-blur-md border-b border-indigo-100 px-4 lg:px-6 py-4 flex items-center gap-3 sticky top-0 z-30 shadow-sm shrink-0 select-none">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 hover:bg-slate-100 rounded-lg"
+            className="lg:hidden p-2.5 hover:bg-slate-100 rounded-xl transition-colors"
           >
             <Menu className="w-5 h-5 text-slate-600" />
           </button>
-          <h1 className="text-lg font-semibold text-slate-800">
+          <h1 className="text-lg font-black text-slate-900 uppercase tracking-tight">
             {menuItems.find(m => m.id === activeSection)?.label || 'Dashboard'}
           </h1>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8 select-auto">
+          <div className="max-w-[1600px] mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

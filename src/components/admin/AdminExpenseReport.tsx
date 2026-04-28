@@ -87,7 +87,7 @@ export default function AdminExpenseReport() {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+      <div className="bg-white rounded-[2rem] p-6 shadow-2xl shadow-slate-200/60 border border-slate-100 border-l-8 border-l-indigo-600">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1.5">From Date</label>
@@ -129,8 +129,8 @@ export default function AdminExpenseReport() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-          <h3 className="text-sm font-semibold text-slate-800 mb-6">Spending by Category</h3>
+        <div className="bg-white rounded-[2rem] p-8 shadow-2xl shadow-indigo-100/50 border border-indigo-100 border-l-8 border-l-indigo-600">
+          <h3 className="text-sm font-semibold text-slate-800 mb-6">Expense Distribution</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -139,14 +139,14 @@ export default function AdminExpenseReport() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value: number) => [`${RUPEE}${value.toLocaleString()}`, "Amount"]} />
+                <Tooltip formatter={(value: any) => [`${RUPEE}${Number(value).toLocaleString()}`, "Amount"]} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        <div className="bg-white rounded-[2rem] p-8 shadow-2xl shadow-indigo-100/50 border border-indigo-100 border-l-8 border-l-indigo-600">
           <h3 className="text-sm font-semibold text-slate-800 mb-6">Top Spending Employees</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -154,7 +154,7 @@ export default function AdminExpenseReport() {
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
                 <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
                 <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} width={100} />
-                <Tooltip formatter={(value: number) => [`${RUPEE}${value.toLocaleString()}`, "Amount"]} cursor={{ fill: '#f8fafc' }} />
+                <Tooltip formatter={(value: any) => [`${RUPEE}${Number(value).toLocaleString()}`, "Amount"]} cursor={{ fill: '#f8fafc' }} />
                 <Bar dataKey="amount" fill="#6366f1" radius={[0, 8, 8, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -165,26 +165,37 @@ export default function AdminExpenseReport() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          { label: 'Total Amount', value: totalAmount, color: 'bg-slate-50 text-slate-700' },
-          { label: 'Approved', value: approvedAmount, color: 'bg-emerald-50 text-emerald-700' },
-          { label: 'Pending', value: pendingAmount, color: 'bg-amber-50 text-amber-700' },
-        ].map(s => (
-          <div key={s.label} className={`${s.color} rounded-xl p-4 flex items-center gap-3`}>
-            <IndianRupee className="w-5 h-5 opacity-50" />
-            <div>
-              <p className="text-xl font-bold">{RUPEE}{s.value.toLocaleString()}</p>
-              <p className="text-xs font-medium mt-0.5">{s.label}</p>
+          { label: 'Total Amount', value: totalAmount, icon: IndianRupee, gradient: 'from-violet-600 to-indigo-700', text: 'Overall' },
+          { label: 'Approved', value: approvedAmount, icon: IndianRupee, gradient: 'from-emerald-500 to-teal-600', text: 'Paid' },
+          { label: 'Pending', value: pendingAmount, icon: IndianRupee, gradient: 'from-amber-500 to-orange-600', text: 'Awaiting' },
+        ].map(s => {
+          const Icon = s.icon;
+          return (
+            <div key={s.label} className={`bg-gradient-to-br ${s.gradient} p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col gap-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border border-white/20 relative overflow-hidden group`}>
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all" />
+              <div className="flex items-center justify-between relative z-10">
+                <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-md">
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+              </div>
+              <div className="relative z-10">
+                <p className="text-sm font-semibold text-white/90 mb-1">{s.label}</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl font-black text-white tracking-tight">{RUPEE}{s.value.toLocaleString()}</p>
+                  <p className="text-xs font-medium text-white/60">{s.text}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-[2rem] shadow-2xl shadow-indigo-100/50 border border-indigo-100 border-l-8 border-l-indigo-600 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
+              <tr className="bg-indigo-50/30 border-b border-indigo-50">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Employee</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Type</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Amount</th>
@@ -194,7 +205,7 @@ export default function AdminExpenseReport() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filtered.map(exp => (
-                <tr key={exp.id} className="hover:bg-slate-50/50">
+                <tr key={exp.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-3 text-sm text-slate-800">{exp.employeeName}</td>
                   <td className="px-4 py-3 text-sm text-slate-600 capitalize hidden sm:table-cell">{exp.type}</td>
                   <td className="px-4 py-3 text-sm font-medium text-slate-800">{RUPEE}{exp.amount.toLocaleString()}</td>

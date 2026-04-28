@@ -2,18 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  overscroll-behavior: none;
+@layer base {
+  body {
+    @apply text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300/50 rounded-full hover:bg-slate-400/50 transition-colors;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-white/50 backdrop-blur-xl border border-white/40 shadow-xl shadow-slate-200/50;
+  }
+  
+  .glass-input {
+    @apply bg-white/50 border border-white/60 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all;
+  }
+
+  .full-bg {
+    @apply absolute inset-0 bg-cover bg-center bg-no-repeat;
+  }
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(100%);
+    transform: translateY(20px);
     opacity: 0;
   }
   to {

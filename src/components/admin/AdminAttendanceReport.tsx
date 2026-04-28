@@ -3,6 +3,7 @@ import { useAppData } from '../../context/AppDataContext';
 import { employees } from '../../data/mockData';
 import SearchableSelect from '../shared/SearchableSelect';
 import DatePicker from '../shared/DatePicker';
+import { UserCheck, UserX, Calendar, Laptop } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, LineChart, Line, Legend 
@@ -67,7 +68,7 @@ export default function AdminAttendanceReport() {
 
   return (
     <div className="space-y-4">
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+      <div className="bg-white rounded-[2rem] p-6 shadow-2xl shadow-slate-200/60 border border-slate-100 border-l-8 border-l-indigo-600">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1.5">From Date</label>
@@ -90,7 +91,7 @@ export default function AdminAttendanceReport() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        <div className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl shadow-slate-200/50 border border-white/40 border-l-8 border-l-indigo-600">
           <h3 className="text-sm font-semibold text-slate-800 mb-6">Attendance Timeline</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -109,7 +110,7 @@ export default function AdminAttendanceReport() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        <div className="bg-white rounded-[2rem] p-6 shadow-2xl shadow-slate-200/60 border border-slate-100 border-l-8 border-l-indigo-600">
           <h3 className="text-sm font-semibold text-slate-800 mb-6">Status Distribution</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -130,23 +131,37 @@ export default function AdminAttendanceReport() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Present', value: summary.present, color: 'bg-emerald-50 text-emerald-700' },
-          { label: 'Absent', value: summary.absent, color: 'bg-red-50 text-red-700' },
-          { label: 'Leave', value: summary.leave, color: 'bg-amber-50 text-amber-700' },
-          { label: 'WFH', value: summary.wfh, color: 'bg-blue-50 text-blue-700' },
-        ].map(s => (
-          <div key={s.label} className={`${s.color} rounded-xl p-3 text-center`}>
-            <p className="text-2xl font-bold">{s.value}</p>
-            <p className="text-xs font-medium mt-0.5">{s.label}</p>
-          </div>
-        ))}
+          { label: 'Present', value: summary.present, icon: UserCheck, gradient: 'from-emerald-500 to-teal-600', text: 'Employees' },
+          { label: 'Absent', value: summary.absent, icon: UserX, gradient: 'from-rose-500 to-red-600', text: 'Employees' },
+          { label: 'Leave', value: summary.leave, icon: Calendar, gradient: 'from-amber-500 to-orange-600', text: 'Requests' },
+          { label: 'WFH', value: summary.wfh, icon: Laptop, gradient: 'from-blue-500 to-indigo-600', text: 'Requests' },
+        ].map(s => {
+          const Icon = s.icon;
+          return (
+            <div key={s.label} className={`bg-gradient-to-br ${s.gradient} p-6 rounded-[2rem] shadow-xl shadow-indigo-100/50 flex flex-col gap-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border border-white/20 relative overflow-hidden group`}>
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all" />
+              <div className="flex items-center justify-between relative z-10">
+                <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-md">
+                  <Icon className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div className="relative z-10">
+                <p className="text-sm font-semibold text-white/90 mb-1">{s.label}</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-4xl font-black text-white tracking-tight">{s.value}</p>
+                  <p className="text-xs font-medium text-white/60">{s.text}</p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-[2rem] shadow-2xl shadow-indigo-100/50 border border-indigo-100 border-l-8 border-l-indigo-600 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
+              <tr className="bg-indigo-50/30 border-b border-indigo-50">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Employee</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Date</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Check In</th>
@@ -158,7 +173,7 @@ export default function AdminAttendanceReport() {
               {filtered.map(record => {
                 const emp = employees.find(e => e.id === record.employeeId);
                 return (
-                  <tr key={record.id} className="hover:bg-slate-50/50">
+                  <tr key={record.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3 text-sm text-slate-800">{emp?.name || 'Unknown'}</td>
                     <td className="px-4 py-3 text-sm text-slate-600">{formatDate(record.date)}</td>
                     <td className="px-4 py-3 text-sm text-slate-600 hidden sm:table-cell">{record.checkIn || '--'}</td>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useAppData } from '../../context/AppDataContext';
-import { Plus, Laptop, X } from 'lucide-react';
+import { Plus, Laptop, X, Calendar } from 'lucide-react';
 
 export default function EmployeeWfh() {
   const { employee } = useAuth();
@@ -109,19 +109,27 @@ export default function EmployeeWfh() {
         </div>
       ) : (
         <div className="space-y-3">
-          {myRequests.map(req => (
-            <div key={req.id} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-slate-800">{req.reason}</p>
-                  <p className="text-xs text-slate-400 mt-2">{req.date}</p>
+          {myRequests.map(req => {
+            const statusLineColor = req.status === 'approved' ? 'border-l-emerald-500' : 
+                                  req.status === 'rejected' ? 'border-l-rose-500' : 
+                                  'border-l-amber-500';
+            return (
+              <div key={req.id} className={`bg-white rounded-2xl p-4 shadow-sm border border-slate-100 border-l-4 ${statusLineColor}`}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">{req.reason}</p>
+                    <p className="text-xs text-slate-400 mt-2 font-medium flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {req.date}
+                    </p>
+                  </div>
+                  <span className={`text-[10px] font-black px-2.5 py-1 rounded-full border uppercase tracking-wider ${statusColor(req.status)}`}>
+                    {req.status}
+                  </span>
                 </div>
-                <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${statusColor(req.status)}`}>
-                  {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
-                </span>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

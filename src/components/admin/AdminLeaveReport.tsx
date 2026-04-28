@@ -3,6 +3,7 @@ import { useAppData } from '../../context/AppDataContext';
 import { employees } from '../../data/mockData';
 import SearchableSelect from '../shared/SearchableSelect';
 import DatePicker from '../shared/DatePicker';
+import { FileText, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, Legend 
@@ -74,7 +75,7 @@ export default function AdminLeaveReport() {
 
   return (
     <div className="space-y-4">
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+      <div className="bg-white rounded-[2rem] p-6 shadow-2xl shadow-slate-200/60 border border-slate-100 border-l-8 border-l-indigo-600">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1.5">From Date</label>
@@ -106,7 +107,7 @@ export default function AdminLeaveReport() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        <div className="bg-white rounded-[2rem] p-8 shadow-2xl shadow-slate-200/60 border border-slate-100 border-l-8 border-l-indigo-600">
           <h3 className="text-sm font-semibold text-slate-800 mb-6">Leave Type Distribution</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -123,7 +124,7 @@ export default function AdminLeaveReport() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        <div className="bg-white rounded-[2rem] p-8 shadow-2xl shadow-slate-200/60 border border-slate-100 border-l-8 border-l-indigo-600">
           <h3 className="text-sm font-semibold text-slate-800 mb-6">Request Status Overview</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -145,23 +146,37 @@ export default function AdminLeaveReport() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Total', value: summary.total, color: 'bg-slate-50 text-slate-700' },
-          { label: 'Approved', value: summary.approved, color: 'bg-emerald-50 text-emerald-700' },
-          { label: 'Rejected', value: summary.rejected, color: 'bg-red-50 text-red-700' },
-          { label: 'Pending', value: summary.pending, color: 'bg-amber-50 text-amber-700' },
-        ].map(s => (
-          <div key={s.label} className={`${s.color} rounded-xl p-3 text-center`}>
-            <p className="text-2xl font-bold">{s.value}</p>
-            <p className="text-xs font-medium mt-0.5">{s.label}</p>
-          </div>
-        ))}
+          { label: 'Total', value: summary.total, icon: FileText, gradient: 'from-violet-600 to-indigo-700', text: 'Requests' },
+          { label: 'Approved', value: summary.approved, icon: CheckCircle2, gradient: 'from-emerald-500 to-teal-600', text: 'Requests' },
+          { label: 'Rejected', value: summary.rejected, icon: XCircle, gradient: 'from-rose-500 to-red-600', text: 'Requests' },
+          { label: 'Pending', value: summary.pending, icon: Clock, gradient: 'from-amber-500 to-orange-600', text: 'Requests' },
+        ].map(s => {
+          const Icon = s.icon;
+          return (
+            <div key={s.label} className={`bg-gradient-to-br ${s.gradient} p-6 rounded-[2rem] shadow-xl shadow-indigo-100/50 flex flex-col gap-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border border-white/20 relative overflow-hidden group`}>
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all" />
+              <div className="flex items-center justify-between relative z-10">
+                <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-md">
+                  <Icon className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div className="relative z-10">
+                <p className="text-sm font-semibold text-white/90 mb-1">{s.label}</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-4xl font-black text-white tracking-tight">{s.value}</p>
+                  <p className="text-xs font-medium text-white/60">{s.text}</p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-[2rem] shadow-2xl shadow-indigo-100/50 border border-indigo-100 border-l-8 border-l-indigo-600 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
+              <tr className="bg-indigo-50/30 border-b border-indigo-50">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Employee</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Type</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell">Dates</th>
@@ -171,7 +186,7 @@ export default function AdminLeaveReport() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filtered.map(leave => (
-                <tr key={leave.id} className="hover:bg-slate-50/50">
+                <tr key={leave.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-3 text-sm text-slate-800">{leave.employeeName}</td>
                   <td className="px-4 py-3 text-sm text-slate-600 capitalize hidden sm:table-cell">{leave.type}</td>
                   <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">{formatDate(leave.startDate)} - {formatDate(leave.endDate)}</td>

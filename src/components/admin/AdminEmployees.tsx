@@ -105,7 +105,7 @@ export default function AdminEmployees() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by name, dept, or email..."
-            className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all shadow-sm"
+            className="w-full pl-10 pr-4 py-3.5 bg-white border border-indigo-100 rounded-2xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
           />
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
@@ -119,31 +119,31 @@ export default function AdminEmployees() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-[2rem] shadow-2xl shadow-indigo-100/50 border border-indigo-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Employee Info</th>
+              <tr className="bg-indigo-50/30 border-b border-indigo-50">
+                <th className="text-left px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-[0.15em]">Employee Info</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider hidden lg:table-cell">Role & Dept</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Daily Status</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Acct Status</th>
                 <th className="text-right px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-white/10">
               {filtered.map(emp => {
                 const attStatus = getAttendanceStatus(emp.id);
                 const isActive = emp.status === 'active';
                 return (
-                  <tr key={emp.id} className={`hover:bg-slate-50/80 transition-colors ${!isActive ? 'opacity-60 grayscale-[0.5]' : ''}`}>
+                  <tr key={emp.id} className={`hover:bg-slate-50 transition-colors ${!isActive ? 'opacity-60 grayscale-[0.5]' : ''}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 shadow-sm ${isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>
                           {emp.avatar}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-800">{emp.name}</p>
+                          <p className="text-sm font-black text-slate-900">{emp.name}</p>
                           <div className="flex items-center gap-2 mt-0.5">
                             <Mail className="w-3 h-3 text-slate-400" />
                             <p className="text-xs text-slate-500">{emp.email}</p>
@@ -177,17 +177,17 @@ export default function AdminEmployees() {
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => handleOpenModal(emp)}
-                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                          title="Edit Details"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-[10px] font-bold transition-all"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Edit2 className="w-3.5 h-3.5" />
+                          Edit
                         </button>
                         <button 
                           onClick={() => handleDelete(emp.id)}
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
-                          title="Delete Record"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-[10px] font-bold transition-all"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Delete
                         </button>
                       </div>
                     </td>
@@ -209,7 +209,7 @@ export default function AdminEmployees() {
 
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-slate-100">
             <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div>
                 <h3 className="font-bold text-xl text-slate-800">{editingEmployee ? 'Edit Employee' : 'Add New Employee'}</h3>
@@ -229,7 +229,7 @@ export default function AdminEmployees() {
                     type="text"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/50 border border-white/60 rounded-2xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
                     placeholder="e.g. Aarav Sharma"
                   />
                 </div>
@@ -242,7 +242,7 @@ export default function AdminEmployees() {
                     type="text"
                     value={formData.department}
                     onChange={e => setFormData({ ...formData, department: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-3.5 bg-white/50 border border-white/60 rounded-2xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
                     placeholder="Engineering"
                   />
                 </div>
@@ -253,7 +253,7 @@ export default function AdminEmployees() {
                     type="text"
                     value={formData.designation}
                     onChange={e => setFormData({ ...formData, designation: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-3.5 bg-white/50 border border-white/60 rounded-2xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
                     placeholder="Developer"
                   />
                 </div>
@@ -267,7 +267,7 @@ export default function AdminEmployees() {
                     type="email"
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/50 border border-white/60 rounded-2xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
                     placeholder="aarav@company.com"
                   />
                 </div>
@@ -281,7 +281,7 @@ export default function AdminEmployees() {
                     type="tel"
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/50 border border-white/60 rounded-2xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
                     placeholder="+91 98765 43210"
                   />
                 </div>

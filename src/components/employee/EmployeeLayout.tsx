@@ -27,14 +27,17 @@ export default function EmployeeLayout() {
     <div className="h-screen bg-slate-50 flex flex-col max-w-lg mx-auto overflow-hidden">
       <header className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-20">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">A</span>
+          <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <span className="text-white font-black text-lg">
+              {employee?.name.charAt(0)}
+            </span>
           </div>
-          <span className="font-semibold text-slate-800">AttendX</span>
-        </div>
-        <div className="text-xs font-bold text-slate-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100 flex items-center gap-2">
-          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-          {employee?.name.split(' ')[0]}
+          <div>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Welcome back</p>
+            <p className="text-base font-black text-slate-800 leading-none">
+              Hi, {employee?.name.split(' ')[0]} 👋
+            </p>
+          </div>
         </div>
       </header>
 

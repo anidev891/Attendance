@@ -106,6 +106,16 @@ export default function EmployeeHome() {
   const timeStr = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const dateStr = currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
+  // Calculate Monthly Stats
+  const employeeAttendance = attendance.filter(a => a.employeeId === employee?.id);
+  const presentDays = employeeAttendance.filter(a => a.status === 'present' || a.status === 'wfh').length;
+  const absentDays = employeeAttendance.filter(a => a.status === 'absent').length;
+  const lateDays = employeeAttendance.filter(a => {
+    if (!a.checkIn) return false;
+    const [h, m] = a.checkIn.split(':').map(Number);
+    return h > 9 || (h === 9 && m > 30); // Assuming 9:30 is late
+  }).length;
+
   return (
     <div className="p-4 space-y-4">
       <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
@@ -131,9 +141,29 @@ export default function EmployeeHome() {
           )}
         </div>
       </div>
-
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: 'Present', value: presentDays, icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600', shadow: 'shadow-emerald-500/20' },
+          { label: 'Absent', value: absentDays, icon: AlertCircle, gradient: 'from-rose-500 to-red-600', shadow: 'shadow-rose-500/20' },
+          { label: 'Late', value: lateDays, icon: Clock, gradient: 'from-amber-500 to-orange-600', shadow: 'shadow-amber-500/20' },
+        ].map(stat => {
+          const Icon = stat.icon;
+          return (
+            <div key={stat.label} className={`bg-gradient-to-br ${stat.gradient} rounded-2xl p-4 text-white shadow-lg ${stat.shadow} relative overflow-hidden group`}>
+              <div className="absolute -right-2 -top-2 w-12 h-12 bg-white/10 rounded-full blur-xl group-hover:bg-white/20 transition-all" />
+              <div className="relative z-10 flex flex-col gap-1">
+                <div className="bg-white/20 w-7 h-7 rounded-lg flex items-center justify-center mb-1">
+                  <Icon className="w-4 h-4 text-white" />
+                </div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-white/70">{stat.label}</p>
+                <p className="text-xl font-black">{stat.value}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
       {todayRecord && (
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 border-l-4 border-l-emerald-500 space-y-3">
           <h3 className="font-semibold text-slate-800 text-sm">Today's Attendance</h3>
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-emerald-50 rounded-xl p-3">
@@ -191,7 +221,7 @@ export default function EmployeeHome() {
         )}
 
         {isCheckedOut && (
-          <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center">
+          <div className="bg-emerald-50 border border-emerald-100 border-l-4 border-l-emerald-500 rounded-2xl p-4 text-center">
             <CheckCircle className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
             <p className="text-emerald-700 font-medium">You have checked out for today</p>
             <p className="text-emerald-600 text-sm mt-1">

@@ -157,27 +157,32 @@ export default function EmployeeExpenses() {
         </div>
       ) : (
         <div className="space-y-3">
-          {myExpenses.map(exp => (
-            <div key={exp.id} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-bold text-slate-500">
-                    {typeIcon(exp.type)}
+          {myExpenses.map(exp => {
+            const statusLineColor = exp.status === 'approved' ? 'border-l-emerald-500' : 
+                                  exp.status === 'rejected' ? 'border-l-rose-500' : 
+                                  'border-l-amber-500';
+            return (
+              <div key={exp.id} className={`bg-white rounded-2xl p-4 shadow-sm border border-slate-100 border-l-4 ${statusLineColor}`}>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-bold text-slate-500">
+                      {typeIcon(exp.type)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">{exp.description}</p>
+                      <p className="text-xs text-slate-400 mt-1 capitalize font-medium">{exp.type} {exp.billFile ? '• Bill Attached' : ''}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-800">{exp.description}</p>
-                    <p className="text-xs text-slate-400 mt-1 capitalize">{exp.type} {exp.billFile ? '- Bill attached' : ''}</p>
+                  <div className="text-right">
+                    <p className="text-sm font-black text-slate-800">₹{exp.amount.toLocaleString()}</p>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border inline-block mt-1 uppercase tracking-wider ${statusColor(exp.status)}`}>
+                      {exp.status}
+                    </span>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold text-slate-800">₹{exp.amount.toLocaleString()}</p>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full border inline-block mt-1 ${statusColor(exp.status)}`}>
-                    {exp.status.charAt(0).toUpperCase() + exp.status.slice(1)}
-                  </span>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

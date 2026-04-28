@@ -29,10 +29,10 @@ export default function EmployeeLoginPage() {
     <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
       {/* Background Image with Overlay */}
       <div
-        className="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-1000 hover:scale-105"
+        className="full-bg transition-transform duration-1000 hover:scale-105 z-0"
         style={{ backgroundImage: `url(${employeeBG})` }}
       />
-      <div className="absolute inset-0 z-1 bg-gradient-to-tr from-emerald-900/40 via-transparent to-slate-900/40 backdrop-blur-[2px]" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-tr from-emerald-900/40 via-transparent to-slate-900/40 backdrop-blur-[2px]" />
 
       <div className="w-full max-w-md relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
         <div className="text-center mb-8">
@@ -43,7 +43,7 @@ export default function EmployeeLoginPage() {
           <p className="text-emerald-50 font-medium mt-1 drop-shadow">Employee Portal</p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
+        <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
           <h2 className="text-2xl font-bold text-slate-800 mb-1">Welcome back</h2>
           <p className="text-slate-500 text-sm mb-8">Sign in to your employee account</p>
 

@@ -48,7 +48,7 @@ export default function DashboardCharts() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
       {/* Attendance Trends (Line Chart) */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm col-span-1 lg:col-span-2">
+      <div className="bg-white p-8 rounded-[2rem] border border-indigo-100 shadow-2xl shadow-indigo-100/50 border-l-8 border-l-indigo-600 col-span-1 lg:col-span-2">
         <h3 className="font-semibold text-slate-800 mb-6">Attendance Trends (Last 7 Days)</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -68,7 +68,7 @@ export default function DashboardCharts() {
       </div>
 
       {/* Attendance Distribution (Pie Chart) */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+      <div className="bg-white p-8 rounded-[2rem] border border-indigo-100 shadow-2xl shadow-indigo-100/50 border-l-8 border-l-indigo-600">
         <h3 className="font-semibold text-slate-800 mb-6">Today's Distribution</h3>
         <div className="h-64 relative">
           <ResponsiveContainer width="100%" height="100%">
@@ -107,7 +107,7 @@ export default function DashboardCharts() {
       </div>
 
       {/* Expense Breakdown (Bar Chart) */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm col-span-1 lg:col-span-3">
+      <div className="bg-white p-8 rounded-[2rem] border border-indigo-100 shadow-2xl shadow-indigo-100/50 border-l-8 border-l-indigo-600 col-span-1 lg:col-span-3">
         <h3 className="font-semibold text-slate-800 mb-6">Expense Breakdown by Category</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
