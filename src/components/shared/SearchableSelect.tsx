@@ -17,34 +17,67 @@ export default function SearchableSelect({ options, placeholder = 'Select...', .
       placeholder={placeholder}
       isSearchable
       isClearable
-      className="text-sm"
+      className="text-xs font-black uppercase tracking-widest"
       classNamePrefix="rs"
+      menuPortalTarget={document.body}
       styles={{
         control: (base, state) => ({
           ...base,
-          minHeight: '42px',
-          borderRadius: '0.75rem',
-          borderColor: state.isFocused ? '#10b981' : '#e2e8f0',
-          boxShadow: state.isFocused ? '0 0 0 2px rgba(16,185,129,0.25)' : 'none',
-          '&:hover': { borderColor: '#10b981' },
-          backgroundColor: '#f8fafc',
+          minHeight: '45px',
+          borderRadius: '1rem',
+          borderColor: state.isFocused ? '#e11d48' : 'var(--card-border)',
+          boxShadow: state.isFocused ? '0 0 0 4px rgba(225,29,72,0.1)' : 'none',
+          backgroundColor: 'var(--input-bg)',
+          transition: 'all 0.3s ease',
+          paddingLeft: '8px',
+          borderWidth: '1px',
+          '&:hover': { borderColor: '#e11d48' },
         }),
         menu: (base) => ({
           ...base,
-          borderRadius: '0.75rem',
-          border: '1px solid #e2e8f0',
-          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
-          zIndex: 50,
+          backgroundColor: 'var(--card-bg)',
+          backdropFilter: 'blur(16px)',
+          borderRadius: '1.25rem',
+          border: '1px solid var(--card-border)',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+          overflow: 'hidden',
+          zIndex: 9999,
         }),
+        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
         option: (base, state) => ({
           ...base,
-          backgroundColor: state.isSelected ? '#10b981' : state.isFocused ? '#f0fdf4' : 'white',
-          color: state.isSelected ? 'white' : '#1e293b',
-          '&:hover': { backgroundColor: state.isSelected ? '#059669' : '#f0fdf4' },
+          backgroundColor: state.isSelected ? '#e11d48' : state.isFocused ? 'rgba(225,29,72,0.05)' : 'transparent',
+          color: state.isSelected ? 'white' : 'var(--text-main)',
+          padding: '12px 20px',
+          fontSize: '10px',
+          fontWeight: 900,
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          cursor: 'pointer',
+          '&:active': { backgroundColor: '#e11d48' },
         }),
-        placeholder: (base) => ({ ...base, color: '#94a3b8' }),
-        clearIndicator: (base) => ({ ...base, color: '#94a3b8', '&:hover': { color: '#64748b' } }),
-        dropdownIndicator: (base) => ({ ...base, color: '#94a3b8', '&:hover': { color: '#64748b' } }),
+        singleValue: (base) => ({
+          ...base,
+          color: 'var(--text-main)',
+          fontWeight: 900,
+        }),
+        placeholder: (base) => ({
+          ...base,
+          color: 'var(--text-muted)',
+          fontWeight: 900,
+          opacity: 0.5,
+        }),
+        clearIndicator: (base) => ({
+          ...base,
+          color: 'var(--text-muted)',
+          '&:hover': { color: '#e11d48' },
+        }),
+        dropdownIndicator: (base) => ({
+          ...base,
+          color: 'var(--text-muted)',
+          '&:hover': { color: '#e11d48' },
+        }),
+        indicatorSeparator: () => ({ display: 'none' }),
       }}
       {...props}
     />

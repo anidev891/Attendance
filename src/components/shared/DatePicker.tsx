@@ -17,9 +17,10 @@ export default function DatePicker({ selected, onChange, placeholderText = 'Sele
       dateFormat="dd-MM-yyyy"
       placeholderText={placeholderText}
       isClearable={isClearable}
-      className={`w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all ${className}`}
-      popperClassName="z-50"
+      className={`w-full px-4 py-3 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-2xl text-[10px] font-black uppercase tracking-widest text-[var(--text-main)] focus:outline-none focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red/50 transition-all ${className}`}
+      popperClassName="z-[9999]"
       popperPlacement="bottom-start"
+      portalId="root"
     />
   );
 }

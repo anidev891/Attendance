@@ -86,47 +86,47 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       {confirmState.isOpen && (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
           <div 
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-300" 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300" 
             onClick={() => setConfirmState(prev => ({ ...prev, isOpen: false }))} 
           />
-          <div className="bg-white/95 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] w-full max-w-[380px] overflow-hidden animate-in fade-in zoom-in-95 duration-300 relative z-10 border border-white">
+          <div className="glass-card rounded-[2.5rem] shadow-2xl w-full max-w-[400px] overflow-hidden animate-slide-up relative z-10 border border-[var(--card-border)] bg-[var(--card-bg)]">
             <div className="p-10 text-center">
-              <div className={`w-20 h-20 rounded-[1.75rem] flex items-center justify-center mx-auto mb-6 relative animate-bounce shadow-2xl ${
-                confirmState.type === 'danger' ? 'bg-red-500 text-white shadow-red-200' : 
-                confirmState.type === 'success' ? 'bg-emerald-500 text-white shadow-emerald-200' :
-                confirmState.type === 'warning' ? 'bg-amber-500 text-white shadow-amber-200' : 
-                'bg-blue-500 text-white shadow-blue-200'
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 relative shadow-2xl ring-1 ring-white/20 ${
+                confirmState.type === 'danger' ? 'bg-brand-red text-white shadow-brand-red/20' : 
+                confirmState.type === 'success' ? 'bg-brand-red text-white shadow-brand-red/20' :
+                confirmState.type === 'warning' ? 'bg-amber-500 text-white shadow-amber-500/20' : 
+                'bg-brand-red text-white shadow-brand-red/20'
               }`}>
-                {confirmState.type === 'danger' && <AlertCircle className="w-10 h-10" />}
-                {confirmState.type === 'success' && <CheckCircle2 className="w-10 h-10" />}
-                {confirmState.type === 'warning' && <AlertTriangle className="w-10 h-10" />}
-                {confirmState.type === 'info' && <Info className="w-10 h-10" />}
+                {confirmState.type === 'danger' && <AlertCircle className="w-8 h-8" />}
+                {confirmState.type === 'success' && <CheckCircle2 className="w-8 h-8" />}
+                {confirmState.type === 'warning' && <AlertTriangle className="w-8 h-8" />}
+                {confirmState.type === 'info' && <Info className="w-8 h-8" />}
                 
                 {/* Decorative pulse */}
-                <div className="absolute inset-0 rounded-[1.75rem] animate-ping opacity-20 bg-current" />
+                <div className="absolute inset-0 rounded-2xl animate-ping opacity-10 bg-current" />
               </div>
               
-              <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">{confirmState.title}</h3>
-              <p className="text-slate-500 text-base leading-relaxed font-medium">{confirmState.message}</p>
+              <h3 className="text-xl font-black text-[var(--text-main)] mb-2 tracking-tight uppercase italic">{confirmState.title}</h3>
+              <p className="text-[var(--text-muted)] text-[10px] leading-relaxed font-black uppercase tracking-widest">{confirmState.message}</p>
             </div>
             
-            <div className="flex gap-3 p-6 pt-0">
+            <div className="flex gap-3 p-8 pt-0">
               <button
                 onClick={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
-                className="flex-1 px-6 py-4 text-sm font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-2xl transition-all active:scale-95"
+                className="flex-1 px-4 py-4 text-[10px] font-black text-[var(--text-muted)] hover:text-[var(--text-main)] bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-xl transition-all active:scale-95 uppercase tracking-[0.2em] border border-[var(--card-border)]"
               >
-                No, Cancel
+                Abort
               </button>
               <button
                 onClick={confirmState.onConfirm}
-                className={`flex-1 px-6 py-4 text-sm font-black rounded-2xl transition-all active:scale-95 shadow-lg ${
-                  confirmState.type === 'danger' ? 'bg-red-500 text-white shadow-red-500/25 hover:bg-red-600' : 
-                  confirmState.type === 'success' ? 'bg-emerald-500 text-white shadow-emerald-500/25 hover:bg-emerald-600' :
-                  confirmState.type === 'warning' ? 'bg-amber-500 text-white shadow-amber-500/25 hover:bg-amber-600' : 
-                  'bg-blue-500 text-white shadow-blue-500/25 hover:bg-blue-600'
+                className={`flex-1 px-4 py-4 text-[10px] font-black rounded-xl transition-all active:scale-95 shadow-xl uppercase tracking-[0.2em] ring-1 ring-white/20 text-white ${
+                  confirmState.type === 'danger' ? 'bg-brand-red shadow-brand-red/40 hover:scale-105' : 
+                  confirmState.type === 'success' ? 'bg-brand-red shadow-brand-red/40 hover:scale-105' :
+                  confirmState.type === 'warning' ? 'bg-amber-500 shadow-amber-500/40 hover:scale-105' : 
+                  'bg-brand-red shadow-brand-red/40 hover:scale-105'
                 }`}
               >
-                Yes, Proceed
+                Execute
               </button>
             </div>
           </div>

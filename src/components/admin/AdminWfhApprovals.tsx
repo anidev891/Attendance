@@ -1,8 +1,10 @@
 import { useAppData } from '../../context/AppDataContext';
 import { useAuth } from '../../context/AuthContext';
-import { Check, X, Laptop, MapPin } from 'lucide-react';
+import { Check, X, Laptop, MapPin, Save } from 'lucide-react';
 import { useState } from 'react';
 import { useNotification } from '../../context/NotificationContext';
+
+import { formatDate } from '../../utils/dateUtils';
 
 export default function AdminWfhApprovals() {
   const { wfhRequests, updateWfhStatus } = useAppData();
@@ -19,65 +21,82 @@ export default function AdminWfhApprovals() {
     if (r > 0) {
       setLocationBoundary({ ...locationBoundary, radius: r });
       setEditingBoundary(false);
+      showSuccess('Operational boundary updated');
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-[2rem] p-6 shadow-2xl shadow-slate-200/60 border border-slate-100 border-l-4 border-l-indigo-500">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-emerald-500" />
-            <span className="text-sm font-medium text-slate-800">Office Location Boundary</span>
+    <div className="space-y-12 animate-slide-up">
+      <div className="glass-card rounded-[2.5rem] p-8 border border-[var(--card-border)] border-l-[12px] border-l-brand-red shadow-xl">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-brand-red/10 rounded-xl">
+               <MapPin className="w-5 h-5 text-brand-red" />
+            </div>
+            <div>
+               <span className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em]">Operational Geofence</span>
+               <h4 className="text-sm font-black text-[var(--text-main)] uppercase tracking-tight">Office Location Boundary</h4>
+            </div>
           </div>
           <button
             onClick={() => setEditingBoundary(!editingBoundary)}
-            className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+            className="text-[10px] font-black text-brand-red hover:text-rose-600 uppercase tracking-widest bg-brand-red/5 px-4 py-2 rounded-xl border border-brand-red/10 transition-colors"
           >
-            {editingBoundary ? 'Cancel' : 'Edit'}
+            {editingBoundary ? 'Cancel Protocol' : 'Modify Boundary'}
           </button>
         </div>
-        <p className="text-xs text-slate-400 mt-1">
-          Lat: {locationBoundary.latitude.toFixed(4)}, Lon: {locationBoundary.longitude.toFixed(4)} | Radius: {locationBoundary.radius}m
+        <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest tabular-nums bg-black/5 dark:bg-white/5 p-4 rounded-2xl inline-block">
+          LAT: {locationBoundary.latitude.toFixed(4)} <span className="mx-2 opacity-30">|</span> LON: {locationBoundary.longitude.toFixed(4)} <span className="mx-2 opacity-30">|</span> RADIUS: {locationBoundary.radius}M
         </p>
         {editingBoundary && (
-          <div className="mt-3 flex items-center gap-2">
-            <input
-              type="number"
-              value={radius}
-              onChange={e => setRadius(e.target.value)}
-              className="w-24 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-            />
-            <span className="text-sm text-slate-500">meters</span>
+          <div className="mt-6 flex items-center gap-4 animate-slide-up">
+            <div className="relative">
+               <input
+                 type="number"
+                 value={radius}
+                 onChange={e => setRadius(e.target.value)}
+                 className="w-40 px-6 py-4 bg-black/5 dark:bg-white/5 border border-[var(--card-border)] rounded-2xl text-sm font-black text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-brand-red/50 transition-all placeholder:text-[var(--text-muted)]"
+                 placeholder="Radius (m)"
+               />
+               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-[var(--text-muted)] uppercase tracking-widest">METERS</span>
+            </div>
             <button
               onClick={handleSaveBoundary}
-              className="px-3 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:bg-emerald-600 transition-colors"
+              className="flex items-center gap-2 px-8 py-4 bg-brand-red text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-rose-600 transition-all shadow-xl shadow-brand-red/20"
             >
-              Save
+              <Save className="w-4 h-4" />
+              Commit Changes
             </button>
           </div>
         )}
       </div>
 
       <div>
-        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Pending Requests ({pending.length})</h3>
+        <h3 className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em] mb-6 ml-4">WFH Authorization Queue ({pending.length})</h3>
         {pending.length === 0 ? (
-          <div className="bg-white rounded-[2rem] p-8 text-center border border-slate-100 shadow-2xl shadow-slate-200/60">
-            <Laptop className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-600 font-bold">No pending WFH requests</p>
+          <div className="glass-card rounded-[3rem] p-20 text-center border-[var(--card-border)] shadow-2xl">
+            <div className="w-24 h-24 bg-black/5 dark:bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-[var(--card-border)]">
+              <Laptop className="w-12 h-12 text-[var(--text-muted)]" />
+            </div>
+            <p className="text-[var(--text-muted)] font-black uppercase tracking-[0.3em] text-xs">Zero pending remote requests</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-5">
             {pending.map(req => (
-               <div key={req.id} className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 border border-slate-100 border-l-4 border-l-indigo-500 hover:scale-[1.01] transition-all duration-300">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-800">{req.employeeName}</p>
-                    <p className="text-sm text-slate-600 mt-1">{req.reason}</p>
-                    <p className="text-xs text-slate-400 mt-1">{formatDate(req.date)}</p>
-                    <p className="text-xs text-blue-500 mt-1 italic">Approved WFH disables location restriction for this employee</p>
+               <div key={req.id} className="glass-card rounded-[2.5rem] p-8 border border-[var(--card-border)] border-l-[12px] border-l-brand-red hover:translate-x-2 transition-all duration-500 shadow-xl group">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4 mb-4">
+                       <p className="text-xl font-black text-[var(--text-main)] tracking-tight uppercase group-hover:text-brand-red transition-colors">{req.employeeName}</p>
+                       <span className="text-[9px] font-black bg-brand-red/10 text-brand-red px-3 py-1.5 rounded-xl uppercase tracking-widest border border-brand-red/20">WFH Protocol</span>
+                    </div>
+                    <p className="text-sm font-black text-[var(--text-muted)] uppercase tracking-tight leading-relaxed mb-4">{req.reason}</p>
+                    <div className="flex flex-wrap items-center gap-4">
+                       <span className="text-[10px] font-black text-brand-red/60 uppercase tracking-widest tabular-nums">Requested Date: {formatDate(req.date)}</span>
+                       <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-3 py-1 rounded-lg border border-blue-500/20 italic">Geofence bypass enabled upon authorization</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+                  <div className="flex gap-4 shrink-0">
                     <button
                       onClick={() => confirm({
                         title: 'Approve WFH?',
@@ -88,9 +107,9 @@ export default function AdminWfhApprovals() {
                           showSuccess('WFH request approved');
                         }
                       })}
-                      className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-600/20 active:scale-95"
+                      className="flex items-center gap-3 px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-[1.25rem] text-[10px] font-black uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20 active:scale-95 ring-1 ring-white/20"
                     >
-                      <Check className="w-3.5 h-3.5" />
+                      <Check className="w-4 h-4" />
                       Approve
                     </button>
                     <button
@@ -103,9 +122,9 @@ export default function AdminWfhApprovals() {
                           showError('WFH request rejected');
                         }
                       })}
-                      className="flex items-center gap-2 px-4 py-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 rounded-xl text-xs font-bold transition-all active:scale-95"
+                      className="flex items-center gap-3 px-8 py-4 bg-black/5 dark:bg-white/5 border border-[var(--card-border)] hover:bg-brand-red hover:text-white hover:border-brand-red text-brand-red rounded-[1.25rem] text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                       Reject
                     </button>
                   </div>
@@ -118,27 +137,27 @@ export default function AdminWfhApprovals() {
 
       {history.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">History</h3>
-          <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
+          <h3 className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em] mb-6 ml-4">Authorization History</h3>
+          <div className="glass-card rounded-[3.5rem] shadow-2xl border border-[var(--card-border)] border-l-[12px] border-l-brand-red overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-slate-50/50 border-b border-slate-100">
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Employee</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Date</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                  <tr className="bg-black/5 dark:bg-white/5 border-b border-[var(--card-border)]">
+                    <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em]">Personnel</th>
+                    <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em] hidden sm:table-cell">Temporal Mark</th>
+                    <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em]">Auth Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+                <tbody className="divide-y divide-[var(--card-border)]">
                   {history.map(req => (
-                    <tr key={req.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-4 py-3 text-sm text-slate-800">{req.employeeName}</td>
-                      <td className="px-4 py-3 text-sm text-slate-600 hidden sm:table-cell">{formatDate(req.date)}</td>
-                      <td className="px-4 py-3">
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                          req.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                    <tr key={req.id} className="hover:bg-black/5 dark:hover:bg-white/[0.02] transition-colors group">
+                      <td className="px-10 py-6 text-sm font-black text-[var(--text-main)] uppercase tracking-tight group-hover:text-brand-red transition-colors">{req.employeeName}</td>
+                      <td className="px-10 py-6 text-sm font-black text-[var(--text-muted)] tabular-nums hidden sm:table-cell">{formatDate(req.date)}</td>
+                      <td className="px-10 py-6">
+                        <span className={`text-[9px] font-black px-3.5 py-1.5 rounded-xl uppercase tracking-widest shadow-sm ${
+                          req.status === 'approved' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
                         }`}>
-                          {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                          {req.status}
                         </span>
                       </td>
                     </tr>
@@ -153,8 +172,4 @@ export default function AdminWfhApprovals() {
   );
 }
 
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '';
-  const [y, m, d] = dateStr.split('-');
-  return `${d}-${m}-${y}`;
-}
+

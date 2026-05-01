@@ -95,16 +95,20 @@ function AppContent() {
   );
 }
 
+import { ThemeProvider } from './context/ThemeContext';
+
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <NotificationProvider>
-          <AppDataProvider>
-            <AppContent />
-          </AppDataProvider>
-        </NotificationProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <AppDataProvider>
+              <AppContent />
+            </AppDataProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

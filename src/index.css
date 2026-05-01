@@ -1,16 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg-main: theme('colors.slate.50');
+    --text-main: theme('colors.slate.900');
+    --text-muted: theme('colors.slate.500');
+    --card-bg: theme('colors.white');
+    --card-border: theme('colors.slate.200');
+    --input-bg: theme('colors.white');
+    --input-border: theme('colors.slate.200');
+    --brand-dark: #020617;
+  }
+
+  .dark {
+    --bg-main: #020617;
+    --text-main: theme('colors.white');
+    --text-muted: theme('colors.slate.400');
+    --card-bg: rgba(15, 23, 42, 0.4); /* brand-surface/40 */
+    --card-border: rgba(255, 255, 255, 0.05);
+    --input-bg: rgba(30, 41, 59, 0.5); /* brand-subtle/50 */
+    --input-border: rgba(255, 255, 255, 0.05);
+  }
+
   body {
-    @apply text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900;
+    @apply bg-[var(--bg-main)] text-[var(--text-main)] antialiased selection:bg-brand-red/30 selection:text-white min-h-screen transition-colors duration-300;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   ::-webkit-scrollbar-track {
@@ -18,21 +42,29 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-slate-300/50 rounded-full hover:bg-slate-400/50 transition-colors;
+    @apply bg-slate-400 dark:bg-slate-800 rounded-full hover:bg-slate-500 dark:hover:bg-slate-700 transition-colors;
   }
 }
 
 @layer utilities {
   .glass-card {
-    @apply bg-white/50 backdrop-blur-xl border border-white/40 shadow-xl shadow-slate-200/50;
+    @apply bg-[var(--card-bg)] backdrop-blur-xl border border-[var(--card-border)] shadow-2xl transition-all duration-300;
   }
   
   .glass-input {
-    @apply bg-white/50 border border-white/60 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all;
+    @apply bg-[var(--input-bg)] border border-[var(--input-border)] focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red/50 transition-all text-[var(--text-main)] placeholder-slate-500;
   }
 
-  .full-bg {
-    @apply absolute inset-0 bg-cover bg-center bg-no-repeat;
+  .premium-gradient {
+    @apply bg-gradient-to-br from-brand-red via-rose-600 to-red-700;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--text-main)] via-slate-400 to-slate-500;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
@@ -45,4 +77,12 @@
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.gradient-mesh {
+  @apply transition-colors duration-500;
+  background-color: var(--bg-main);
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(344, 84%, 49%, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(220, 100%, 15%, 0.1) 0px, transparent 50%);
 }

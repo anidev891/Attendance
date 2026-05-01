@@ -4,6 +4,8 @@ import { employees } from '../../data/mockData';
 import SearchableSelect from '../shared/SearchableSelect';
 import DatePicker from '../shared/DatePicker';
 import { UserCheck, UserX, Calendar, Laptop } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
+import { formatDate } from '../../utils/dateUtils';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, LineChart, Line, Legend 
@@ -11,9 +13,16 @@ import {
 
 export default function AdminAttendanceReport() {
   const { attendance } = useAppData();
+  const { theme } = useTheme();
   const [fromDate, setFromDate] = useState<Date | null>(new Date());
   const [toDate, setToDate] = useState<Date | null>(new Date());
   const [selectedEmployee, setSelectedEmployee] = useState<string>('overall');
+
+  const isDark = theme === 'dark';
+  const textColor = isDark ? '#94a3b8' : '#64748b';
+  const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+  const tooltipBg = isDark ? '#0f172a' : '#ffffff';
+  const tooltipBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
   const employeeOptions = useMemo(() => [
     { value: 'overall', label: 'Overall' },
@@ -36,10 +45,10 @@ export default function AdminAttendanceReport() {
   }, [attendance, fromDate, toDate, selectedEmployee]);
 
   const statusColors: Record<string, string> = {
-    present: 'bg-emerald-100 text-emerald-700',
-    absent: 'bg-red-100 text-red-700',
-    leave: 'bg-amber-100 text-amber-700',
-    wfh: 'bg-blue-100 text-blue-700',
+    present: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
+    absent: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20',
+    leave: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
+    wfh: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20',
   };
 
   const summary = {
@@ -50,7 +59,7 @@ export default function AdminAttendanceReport() {
   };
 
   const chartData = [
-    { name: 'Present', value: summary.present, color: '#10b981' },
+    { name: 'Present', value: summary.present, color: '#e11d48' },
     { name: 'Absent', value: summary.absent, color: '#ef4444' },
     { name: 'Leave', value: summary.leave, color: '#f59e0b' },
     { name: 'WFH', value: summary.wfh, color: '#3b82f6' },
@@ -67,19 +76,19 @@ export default function AdminAttendanceReport() {
   }, [filtered]);
 
   return (
-    <div className="space-y-4">
-      <div className="bg-white rounded-[2rem] p-6 shadow-2xl shadow-slate-200/60 border border-slate-100 border-l-8 border-l-indigo-600">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="space-y-8 animate-slide-up">
+      <div className="glass-card p-10 rounded-[3rem] border-l-[12px] border-l-brand-red shadow-2xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">From Date</label>
+            <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mb-3 ml-2">Temporal Start</label>
             <DatePicker selected={fromDate} onChange={setFromDate} placeholderText="From date" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">To Date</label>
+            <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mb-3 ml-2">Temporal End</label>
             <DatePicker selected={toDate} onChange={setToDate} placeholderText="To date" />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">Employee</label>
+            <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mb-3 ml-2">Operational Unit</label>
             <SearchableSelect
               options={employeeOptions}
               value={employeeOptions.find(o => o.value === selectedEmployee) || null}
@@ -90,38 +99,46 @@ export default function AdminAttendanceReport() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl shadow-slate-200/50 border border-white/40 border-l-8 border-l-indigo-600">
-          <h3 className="text-sm font-semibold text-slate-800 mb-6">Attendance Timeline</h3>
-          <div className="h-64">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 glass-card rounded-[3rem] p-10 border-l-[12px] border-l-brand-red shadow-xl">
+          <h3 className="text-2xl font-black text-[var(--text-main)] mb-10 flex items-center gap-3 tracking-tighter uppercase">
+             Attendance Timeline
+             <span className="text-[10px] font-black bg-brand-red/10 text-brand-red px-3 py-1.5 rounded-xl uppercase tracking-widest border border-brand-red/20">Chronological</span>
+          </h3>
+          <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={timelineData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
+                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: textColor, fontSize: 10, fontWeight: 800}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: textColor, fontSize: 10, fontWeight: 800}} />
                 <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  contentStyle={{ backgroundColor: tooltipBg, borderRadius: '24px', border: `1px solid ${tooltipBorder}`, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', padding: '16px' }}
+                  itemStyle={{ fontSize: '12px', fontWeight: '900', textTransform: 'uppercase' }}
+                  labelStyle={{ color: '#e11d48', fontWeight: '900', marginBottom: '8px', fontSize: '10px' }}
                 />
-                <Legend verticalAlign="top" align="right" iconType="circle" />
-                <Line type="monotone" dataKey="present" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} />
-                <Line type="monotone" dataKey="absent" stroke="#ef4444" strokeWidth={3} dot={{ r: 4, fill: '#ef4444' }} />
+                <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{ paddingBottom: '30px', fontSize: '10px', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '2px' }} />
+                <Line type="monotone" dataKey="present" stroke="#e11d48" strokeWidth={5} dot={{ r: 6, fill: '#e11d48', strokeWidth: 3, stroke: tooltipBg }} activeDot={{ r: 8, strokeWidth: 0, fill: '#e11d48' }} />
+                <Line type="monotone" dataKey="absent" stroke={isDark ? '#334155' : '#cbd5e1'} strokeWidth={5} dot={{ r: 6, fill: isDark ? '#334155' : '#cbd5e1', strokeWidth: 3, stroke: tooltipBg }} activeDot={{ r: 8, strokeWidth: 0 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white rounded-[2rem] p-6 shadow-2xl shadow-slate-200/60 border border-slate-100 border-l-8 border-l-indigo-600">
-          <h3 className="text-sm font-semibold text-slate-800 mb-6">Status Distribution</h3>
-          <div className="h-64">
+        <div className="glass-card rounded-[3rem] p-10 border-l-[12px] border-l-brand-red shadow-xl">
+          <h3 className="text-2xl font-black text-[var(--text-main)] mb-10 flex items-center gap-3 tracking-tighter uppercase">
+             Distribution
+             <span className="text-[10px] font-black bg-brand-red/10 text-brand-red px-3 py-1.5 rounded-xl uppercase tracking-widest border border-brand-red/20">Telemetry</span>
+          </h3>
+          <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={chartData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                <Pie data={chartData} innerRadius={80} outerRadius={105} paddingAngle={10} dataKey="value">
                   {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                   ))}
                 </Pie>
                 <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  contentStyle={{ backgroundColor: tooltipBg, borderRadius: '20px', border: `1px solid ${tooltipBorder}` }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -129,27 +146,27 @@ export default function AdminAttendanceReport() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
         {[
-          { label: 'Present', value: summary.present, icon: UserCheck, gradient: 'from-emerald-500 to-teal-600', text: 'Employees' },
-          { label: 'Absent', value: summary.absent, icon: UserX, gradient: 'from-rose-500 to-red-600', text: 'Employees' },
-          { label: 'Leave', value: summary.leave, icon: Calendar, gradient: 'from-amber-500 to-orange-600', text: 'Requests' },
-          { label: 'WFH', value: summary.wfh, icon: Laptop, gradient: 'from-blue-500 to-indigo-600', text: 'Requests' },
+          { label: 'Present', value: summary.present, icon: UserCheck, gradient: 'from-emerald-500 to-teal-600', text: 'Confirmed' },
+          { label: 'Absent', value: summary.absent, icon: UserX, gradient: 'from-rose-500 to-red-600', text: 'Deficit' },
+          { label: 'Leave', value: summary.leave, icon: Calendar, gradient: 'from-amber-500 to-orange-600', text: 'Off-Grid' },
+          { label: 'WFH', value: summary.wfh, icon: Laptop, gradient: 'from-blue-500 to-indigo-600', text: 'Remote' },
         ].map(s => {
           const Icon = s.icon;
           return (
-            <div key={s.label} className={`bg-gradient-to-br ${s.gradient} p-6 rounded-[2rem] shadow-xl shadow-indigo-100/50 flex flex-col gap-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border border-white/20 relative overflow-hidden group`}>
-              <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all" />
+            <div key={s.label} className={`bg-gradient-to-br ${s.gradient} p-8 rounded-[2.5rem] shadow-xl flex flex-col gap-6 transition-all duration-500 hover:scale-[1.05] hover:shadow-2xl border border-white/20 relative overflow-hidden group ring-1 ring-white/10`}>
+              <div className="absolute -right-4 -top-4 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all" />
               <div className="flex items-center justify-between relative z-10">
-                <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-md">
+                <div className="p-4 rounded-2xl bg-white/20 backdrop-blur-md shadow-inner">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
               </div>
               <div className="relative z-10">
-                <p className="text-sm font-semibold text-white/90 mb-1">{s.label}</p>
-                <div className="flex items-baseline gap-2">
-                  <p className="text-4xl font-black text-white tracking-tight">{s.value}</p>
-                  <p className="text-xs font-medium text-white/60">{s.text}</p>
+                <p className="text-[10px] font-black text-white/80 uppercase tracking-[0.25em] mb-2">{s.label}</p>
+                <div className="flex items-baseline gap-3">
+                  <p className="text-5xl font-black text-white tracking-tighter tabular-nums">{s.value}</p>
+                  <p className="text-[10px] font-black text-white/50 uppercase tracking-widest">{s.text}</p>
                 </div>
               </div>
             </div>
@@ -157,29 +174,29 @@ export default function AdminAttendanceReport() {
         })}
       </div>
 
-      <div className="bg-white rounded-[2rem] shadow-2xl shadow-indigo-100/50 border border-indigo-100 border-l-8 border-l-indigo-600 overflow-hidden">
+      <div className="glass-card rounded-[3.5rem] shadow-2xl border border-[var(--card-border)] border-l-[12px] border-l-brand-red overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-indigo-50/30 border-b border-indigo-50">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Employee</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Check In</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Check Out</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+              <tr className="bg-black/5 dark:bg-white/5 border-b border-[var(--card-border)]">
+                <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em]">Personnel Identity</th>
+                <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em]">Temporal Mark</th>
+                <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em] hidden sm:table-cell">Initial Entry</th>
+                <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em] hidden sm:table-cell">Final Exit</th>
+                <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em]">Status Code</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-[var(--card-border)]">
               {filtered.map(record => {
                 const emp = employees.find(e => e.id === record.employeeId);
                 return (
-                  <tr key={record.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-4 py-3 text-sm text-slate-800">{emp?.name || 'Unknown'}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{formatDate(record.date)}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 hidden sm:table-cell">{record.checkIn || '--'}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 hidden sm:table-cell">{record.checkOut || '--'}</td>
-                    <td className="px-4 py-3">
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${statusColors[record.status]}`}>
+                  <tr key={record.id} className="hover:bg-black/5 dark:hover:bg-white/[0.02] transition-colors group">
+                    <td className="px-10 py-6 text-sm font-black text-[var(--text-main)] uppercase tracking-tight group-hover:text-brand-red transition-colors">{emp?.name || 'Unknown'}</td>
+                    <td className="px-10 py-6 text-sm font-black text-[var(--text-muted)] tabular-nums">{formatDate(record.date)}</td>
+                    <td className="px-10 py-6 text-sm font-black text-[var(--text-muted)] hidden sm:table-cell tabular-nums">{record.checkIn || '--:--'}</td>
+                    <td className="px-10 py-6 text-sm font-black text-[var(--text-muted)] hidden sm:table-cell tabular-nums">{record.checkOut || '--:--'}</td>
+                    <td className="px-10 py-6">
+                      <span className={`text-[9px] font-black px-3.5 py-1.5 rounded-xl uppercase tracking-widest shadow-sm ${statusColors[record.status]}`}>
                         {record.status}
                       </span>
                     </td>
@@ -190,14 +207,14 @@ export default function AdminAttendanceReport() {
           </table>
         </div>
         {filtered.length === 0 && (
-          <div className="p-8 text-center text-slate-400 text-sm">No records found</div>
+          <div className="py-24 text-center">
+            <div className="w-24 h-24 bg-black/5 dark:bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-[var(--card-border)]">
+              <Calendar className="w-12 h-12 text-[var(--text-muted)]" />
+            </div>
+            <p className="text-[var(--text-muted)] font-black uppercase tracking-[0.3em] text-xs">Zero operational records detected</p>
+          </div>
         )}
       </div>
     </div>
   );
-}
-
-function formatDate(dateStr: string): string {
-  const [y, m, d] = dateStr.split('-');
-  return `${d}-${m}-${y}`;
 }

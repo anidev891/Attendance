@@ -1,6 +1,8 @@
 import { useAppData } from '../../context/AppDataContext';
-import { Check, X, Receipt, IndianRupee } from 'lucide-react';
+import { Check, X, Receipt, IndianRupee, Clock, CheckCircle2 } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
+
+import { formatDate } from '../../utils/dateUtils';
 
 export default function AdminExpenseApprovals() {
   const { expenses, updateExpenseStatus } = useAppData();
@@ -33,47 +35,54 @@ export default function AdminExpenseApprovals() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-12 animate-slide-up">
       <div>
-        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Pending Requests ({pending.length})</h3>
+        <h3 className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em] mb-6 ml-4">Pending Authorization ({pending.length})</h3>
         {pending.length === 0 ? (
-          <div className="bg-white rounded-[2rem] p-8 text-center border border-slate-100 shadow-2xl shadow-slate-200/60">
-            <Receipt className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-600 font-bold">No pending expense requests</p>
+          <div className="glass-card rounded-[3rem] p-20 text-center border-[var(--card-border)] shadow-2xl">
+            <div className="w-24 h-24 bg-black/5 dark:bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-[var(--card-border)]">
+              <Receipt className="w-12 h-12 text-[var(--text-muted)]" />
+            </div>
+            <p className="text-[var(--text-muted)] font-black uppercase tracking-[0.3em] text-xs">Zero pending expense requests</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-5">
             {pending.map(exp => (
-              <div key={exp.id} className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 border border-slate-100 border-l-4 border-l-indigo-500 hover:scale-[1.01] transition-all duration-300">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-800">{exp.employeeName}</p>
-                    <p className="text-xs text-slate-400 capitalize mt-0.5">{exp.type} Expense</p>
-                    <p className="text-sm text-slate-600 mt-2">{exp.description}</p>
-                    <div className="flex items-center gap-4 mt-1">
-                      <div className="flex items-center gap-1">
-                        <IndianRupee className="w-3 h-3 text-slate-400" />
-                        <span className="text-sm font-semibold text-slate-800">{exp.amount.toLocaleString()}</span>
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-medium">Applied on: {formatDate(exp.appliedOn)}</span>
+              <div key={exp.id} className="glass-card rounded-[2.5rem] p-8 border border-[var(--card-border)] border-l-[12px] border-l-brand-red hover:translate-x-2 transition-all duration-500 shadow-xl group">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4 mb-4">
+                       <p className="text-xl font-black text-[var(--text-main)] tracking-tight uppercase group-hover:text-brand-red transition-colors">{exp.employeeName}</p>
+                       <span className="text-[9px] font-black bg-brand-red/10 text-brand-red px-3 py-1.5 rounded-xl uppercase tracking-widest border border-brand-red/20">{exp.type} Expense</span>
                     </div>
-                    {exp.billFile && (
-                      <p className="text-xs text-emerald-600 mt-1">Bill: {exp.billFile}</p>
-                    )}
+                    <p className="text-sm font-black text-[var(--text-muted)] uppercase tracking-tight leading-relaxed mb-4">{exp.description}</p>
+                    <div className="flex items-center gap-6">
+                       <div className="flex items-center gap-2">
+                          <IndianRupee className="w-4 h-4 text-brand-red" />
+                          <span className="text-xl font-black text-[var(--text-main)] tabular-nums tracking-tighter">₹{exp.amount.toLocaleString()}</span>
+                       </div>
+                       <span className="text-[10px] font-black text-brand-red/60 uppercase tracking-widest tabular-nums">Applied: {formatDate(exp.appliedOn)}</span>
+                       {exp.billFile && (
+                          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-2">
+                             <CheckCircle2 className="w-3.5 h-3.5" />
+                             Artifact Attached
+                          </span>
+                       )}
+                    </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+                  <div className="flex gap-4 shrink-0">
                     <button
                       onClick={() => handleApprove(exp.id)}
-                      className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-600/20 active:scale-95"
+                      className="flex items-center gap-3 px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-[1.25rem] text-[10px] font-black uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20 active:scale-95 ring-1 ring-white/20"
                     >
-                      <Check className="w-3.5 h-3.5" />
+                      <Check className="w-4 h-4" />
                       Approve
                     </button>
                     <button
                       onClick={() => handleReject(exp.id)}
-                      className="flex items-center gap-2 px-4 py-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 rounded-xl text-xs font-bold transition-all active:scale-95"
+                      className="flex items-center gap-3 px-8 py-4 bg-black/5 dark:bg-white/5 border border-[var(--card-border)] hover:bg-brand-red hover:text-white hover:border-brand-red text-brand-red rounded-[1.25rem] text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                       Reject
                     </button>
                   </div>
@@ -86,31 +95,31 @@ export default function AdminExpenseApprovals() {
 
       {history.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">History</h3>
-          <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
+          <h3 className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em] mb-6 ml-4">Fiscal Authorization History</h3>
+          <div className="glass-card rounded-[3.5rem] shadow-2xl border border-[var(--card-border)] border-l-[12px] border-l-brand-red overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-slate-50/50 border-b border-slate-100">
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Employee</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Type</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Amount</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                  <tr className="bg-black/5 dark:bg-white/5 border-b border-[var(--card-border)]">
+                    <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em]">Personnel</th>
+                    <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em] hidden sm:table-cell">Protocol</th>
+                    <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em]">Valuation</th>
+                    <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em]">Temporal Mark</th>
+                    <th className="text-left px-10 py-6 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.25em]">Auth Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+                <tbody className="divide-y divide-[var(--card-border)]">
                   {history.map(exp => (
-                    <tr key={exp.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-4 py-3 text-sm text-slate-800">{exp.employeeName}</td>
-                      <td className="px-4 py-3 text-sm text-slate-600 capitalize hidden sm:table-cell">{exp.type}</td>
-                      <td className="px-4 py-3 text-sm font-medium text-slate-800">₹{exp.amount.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-sm text-slate-600">{formatDate(exp.appliedOn)}</td>
-                      <td className="px-4 py-3">
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                          exp.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                    <tr key={exp.id} className="hover:bg-black/5 dark:hover:bg-white/[0.02] transition-colors group">
+                      <td className="px-10 py-6 text-sm font-black text-[var(--text-main)] uppercase tracking-tight group-hover:text-brand-red transition-colors">{exp.employeeName}</td>
+                      <td className="px-10 py-6 text-sm font-black text-brand-red/60 uppercase tracking-widest hidden sm:table-cell">{exp.type}</td>
+                      <td className="px-10 py-6 text-sm font-black text-[var(--text-main)] tabular-nums tracking-tighter">₹{exp.amount.toLocaleString()}</td>
+                      <td className="px-10 py-6 text-sm font-black text-[var(--text-muted)] tabular-nums">{formatDate(exp.appliedOn)}</td>
+                      <td className="px-10 py-6">
+                        <span className={`text-[9px] font-black px-3.5 py-1.5 rounded-xl uppercase tracking-widest shadow-sm ${
+                          exp.status === 'approved' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
                         }`}>
-                          {exp.status.charAt(0).toUpperCase() + exp.status.slice(1)}
+                          {exp.status}
                         </span>
                       </td>
                     </tr>
@@ -123,10 +132,4 @@ export default function AdminExpenseApprovals() {
       )}
     </div>
   );
-}
-
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '';
-  const [y, m, d] = dateStr.split('-');
-  return `${d}-${m}-${y}`;
 }

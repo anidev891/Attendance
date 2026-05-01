@@ -18,16 +18,16 @@ const icons = {
 };
 
 const colors = {
-  success: 'bg-emerald-50 border-emerald-200 text-emerald-800',
-  error: 'bg-red-50 border-red-200 text-red-800',
-  info: 'bg-blue-50 border-blue-200 text-blue-800',
-  warning: 'bg-amber-50 border-amber-200 text-amber-800',
+  success: 'bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400',
+  error: 'bg-brand-red/10 border-brand-red/20 text-brand-red',
+  info: 'bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400',
+  warning: 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400',
 };
 
 const iconColors = {
-  success: 'text-emerald-500',
-  error: 'text-red-500',
-  info: 'text-blue-500',
+  success: 'text-rose-500',
+  error: 'text-brand-red',
+  info: 'text-rose-500',
   warning: 'text-amber-500',
 };
 
@@ -42,14 +42,14 @@ export default function Notification({ id, type, message, onClose }: Notificatio
   }, [id, onClose]);
 
   return (
-    <div className={`flex items-center gap-3 p-4 rounded-xl border ${colors[type]} shadow-lg animate-in slide-in-from-right-full duration-300 max-w-md w-full pointer-events-auto`}>
-      <div className={`flex-shrink-0 ${iconColors[type]}`}>
+    <div className={`flex items-center gap-4 p-4 rounded-2xl border backdrop-blur-xl ${colors[type]} shadow-2xl animate-in slide-in-from-right-full duration-300 max-w-md w-full pointer-events-auto`}>
+      <div className={`flex-shrink-0 p-2 rounded-xl bg-white/5 ${iconColors[type]}`}>
         <Icon className="w-5 h-5" />
       </div>
-      <p className="text-sm font-medium flex-grow">{message}</p>
+      <p className="text-[10px] font-black uppercase tracking-widest flex-grow">{message}</p>
       <button 
         onClick={() => onClose(id)}
-        className="flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity"
+        className="flex-shrink-0 opacity-40 hover:opacity-100 transition-opacity p-1 hover:bg-white/5 rounded-lg"
       >
         <X className="w-4 h-4" />
       </button>

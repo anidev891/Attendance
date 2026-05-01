@@ -1,22 +1,23 @@
 import { useState, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useAppData } from '../../context/AppDataContext';
-import { Plus, Calendar, X, Clock, Heart, ShieldCheck, CheckCircle2, WalletCards } from 'lucide-react';
+import { Plus, Calendar, X, Clock, Heart, ShieldCheck, CheckCircle2, WalletCards, Send } from 'lucide-react';
 import type { LeaveRequest } from '../../types';
-import SearchableSelect from '../shared/SearchableSelect';
+import DatePicker from '../shared/DatePicker';
+
+import { formatDate } from '../../utils/dateUtils';
 
 export default function EmployeeLeave() {
   const { employee } = useAuth();
   const { leaves, addLeave } = useAppData();
   const [showForm, setShowForm] = useState(false);
   const [type, setType] = useState<LeaveRequest['type']>('casual');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [reason, setReason] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const myLeaves = leaves.filter(l => l.employeeId === employee?.id);
-
   const pendingCount = myLeaves.filter(l => l.status === 'pending').length;
   
   const calculateDays = (start: string, end: string) => {
@@ -30,20 +31,6 @@ export default function EmployeeLeave() {
       .filter(l => l.type === type && l.status === 'approved')
       .reduce((sum, l) => sum + calculateDays(l.startDate, l.endDate), 0);
   };
-
-  const leaveStats = [
-    { label: 'Pending', value: pendingCount, total: null, color: 'text-amber-600', bg: 'bg-amber-50' },
-    { label: 'Casual', value: getUsedCount('casual'), total: 12, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { label: 'Sick', value: getUsedCount('sick'), total: 10, color: 'text-rose-600', bg: 'bg-rose-50' },
-    { label: 'Privilege', value: getUsedCount('earned'), total: 15, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  ];
-
-  const leaveTypeOptions = useMemo(() => [
-    { value: 'casual', label: 'Casual Leave' },
-    { value: 'sick', label: 'Sick Leave' },
-    { value: 'earned', label: 'Earned Leave' },
-    { value: 'unpaid', label: 'Unpaid Leave' },
-  ], []);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -59,66 +46,69 @@ export default function EmployeeLeave() {
     e.preventDefault();
     if (!validate()) return;
     const today = new Date().toISOString().split('T')[0];
+    const startStr = startDate!.toISOString().split('T')[0];
+    const endStr = endDate!.toISOString().split('T')[0];
+    
     addLeave({
       id: `lr-${Date.now()}`,
       employeeId: employee!.id,
       employeeName: employee!.name,
       type,
-      startDate,
-      endDate,
+      startDate: startStr,
+      endDate: endStr,
       reason,
       status: 'pending',
       appliedOn: today,
     });
     setShowForm(false);
     setType('casual');
-    setStartDate('');
-    setEndDate('');
+    setStartDate(null);
+    setEndDate(null);
     setReason('');
     setErrors({});
   };
 
   const statusColor = (s: LeaveRequest['status']) => {
     switch (s) {
-      case 'approved': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'rejected': return 'bg-red-50 text-red-700 border-red-200';
-      default: return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'approved': return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20';
+      case 'rejected': return 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20';
+      default: return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20';
     }
   };
 
   const typeLabel = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="p-4 space-y-6 animate-slide-up">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-800">Leave Requests</h2>
+        <h2 className="text-base font-black text-[var(--text-main)] uppercase tracking-tight">Leave Protocols</h2>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 shadow-sm hover:bg-emerald-600 transition-colors active:scale-95"
+          className="premium-gradient text-white px-6 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-[0.2em] flex items-center gap-2 shadow-lg shadow-brand-red/10 hover:shadow-brand-red/20 transition-all active:scale-95 ring-1 ring-white/10"
         >
-          <Plus className="w-4 h-4" /> Apply
+          <Plus className="w-3.5 h-3.5" /> Initialize
         </button>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         {[
-          { label: 'Pending', value: pendingCount, total: null, icon: Clock, gradient: 'from-amber-500 to-orange-600', shadow: 'shadow-amber-500/20' },
-          { label: 'Casual', value: getUsedCount('casual'), total: 12, icon: Heart, gradient: 'from-blue-500 to-indigo-600', shadow: 'shadow-blue-500/20' },
-          { label: 'Sick', value: getUsedCount('sick'), total: 10, icon: ShieldCheck, gradient: 'from-rose-500 to-red-600', shadow: 'shadow-rose-500/20' },
-          { label: 'Privilege', value: getUsedCount('earned'), total: 15, icon: CheckCircle2, gradient: 'from-emerald-500 to-teal-600', shadow: 'shadow-emerald-500/20' },
+          { label: 'Pending Auth', value: pendingCount, total: null, icon: Clock, gradient: 'from-amber-500 to-orange-600', shadow: 'shadow-amber-500/10' },
+          { label: 'Casual', value: getUsedCount('casual'), total: 12, icon: Heart, gradient: 'from-blue-500 to-indigo-600', shadow: 'shadow-blue-500/10' },
+          { label: 'Medical', value: getUsedCount('sick'), total: 10, icon: ShieldCheck, gradient: 'from-rose-500 to-red-600', shadow: 'shadow-rose-500/10' },
+          { label: 'Earned', value: getUsedCount('earned'), total: 15, icon: CheckCircle2, gradient: 'from-emerald-500 to-teal-600', shadow: 'shadow-emerald-500/10' },
         ].map(stat => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className={`bg-gradient-to-br ${stat.gradient} rounded-[1.75rem] p-5 text-white shadow-lg ${stat.shadow} relative overflow-hidden group`}>
-              <div className="absolute -right-4 -top-4 w-16 h-16 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all" />
+            <div key={stat.label} className={`bg-gradient-to-br ${stat.gradient} rounded-[1.5rem] p-4 text-white shadow-md ${stat.shadow} relative overflow-hidden group border border-white/5`}>
+              <div className="absolute -right-2 -top-2 w-12 h-12 bg-white/10 rounded-full blur-xl group-hover:bg-white/20 transition-all" />
               <div className="relative z-10">
-                <div className="bg-white/20 w-8 h-8 rounded-xl flex items-center justify-center mb-3">
+                <div className="bg-white/20 w-8 h-8 rounded-xl flex items-center justify-center mb-3 backdrop-blur-md border border-white/30">
                   <Icon className="w-4 h-4 text-white" />
                 </div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-white/80 mb-1">{stat.label} Leave</p>
+                <p className="text-[8px] font-black uppercase tracking-[0.1em] text-white/80 mb-1">{stat.label}</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-black">{stat.value}</span>
-                  {stat.total && <span className="text-xs font-bold text-white/60">/ {stat.total}</span>}
+                  <span className="text-xl font-black tabular-nums">{stat.value}</span>
+                  {stat.total && <span className="text-[10px] font-black text-white/50 tracking-widest">/ {stat.total}</span>}
                 </div>
               </div>
             </div>
@@ -127,16 +117,20 @@ export default function EmployeeLeave() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white w-full max-w-lg rounded-t-3xl p-6" onClick={e => e.stopPropagation()} style={{ animation: 'slideUp 0.3s ease-out' }}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-slate-800">Apply for Leave</h3>
-              <button onClick={() => setShowForm(false)} className="p-1 hover:bg-slate-100 rounded-lg">
-                <X className="w-5 h-5 text-slate-500" />
+        <div className="fixed inset-0 bg-black/40 dark:bg-brand-dark/90 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+          <div className="glass-card w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden animate-slide-up border border-[var(--card-border)]" onClick={e => e.stopPropagation()}>
+            <div className="px-8 py-6 border-b border-[var(--card-border)] flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
+              <div>
+                <h3 className="font-black text-xl text-[var(--text-main)] tracking-tighter uppercase">Protocol Initiation</h3>
+                <p className="text-[8px] font-black text-brand-red uppercase tracking-[0.2em] mt-1">Absence Request</p>
+              </div>
+              <button onClick={() => setShowForm(false)} className="p-2.5 bg-black/5 dark:bg-white/5 hover:bg-brand-red group rounded-xl transition-all border border-[var(--card-border)]">
+                <X className="w-4 h-4 text-[var(--text-muted)] group-hover:text-white" />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div>
+                <label className="text-[8px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] ml-2 mb-3 block">Protocol Type</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { id: 'casual', label: 'Casual', icon: Heart, color: 'emerald' },
@@ -151,66 +145,56 @@ export default function EmployeeLeave() {
                         key={opt.id}
                         type="button"
                         onClick={() => setType(opt.id as LeaveRequest['type'])}
-                        className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left ${
+                        className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all text-left group ${
                           isSelected 
-                            ? `border-${opt.color}-500 bg-${opt.color}-50` 
-                            : 'border-slate-100 bg-white hover:border-slate-200'
+                            ? 'border-brand-red bg-brand-red/5' 
+                            : 'border-[var(--card-border)] bg-black/5 dark:bg-white/5 hover:border-brand-red/30'
                         }`}
                       >
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          isSelected ? `bg-${opt.color}-500 text-white` : 'bg-slate-50 text-slate-400'
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
+                          isSelected ? 'bg-brand-red text-white scale-110 shadow-lg shadow-brand-red/10' : 'bg-black/5 dark:bg-white/5 text-[var(--text-muted)]'
                         }`}>
-                          <Icon className="w-5 h-5" />
+                          <Icon className="w-4 h-4" />
                         </div>
                         <div>
-                          <p className={`text-sm font-bold ${isSelected ? `text-${opt.color}-700` : 'text-slate-700'}`}>
+                          <p className={`text-[10px] font-black uppercase tracking-tight ${isSelected ? 'text-[var(--text-main)]' : 'text-[var(--text-muted)]'}`}>
                             {opt.label}
                           </p>
-                          <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Leave</p>
                         </div>
                       </button>
                     );
                   })}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Start Date</label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={e => setStartDate(e.target.value)}
-                    className={`w-full px-3 py-2.5 border rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 ${errors.startDate ? 'border-red-300' : 'border-slate-200'}`}
-                  />
-                  {errors.startDate && <p className="text-xs text-red-500 mt-1">{errors.startDate}</p>}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[8px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] ml-2">Start</label>
+                  <DatePicker selected={startDate} onChange={setStartDate} placeholderText="Start date" className={errors.startDate ? 'border-rose-500' : ''} />
+                  {errors.startDate && <p className="text-[8px] font-black text-rose-500 uppercase tracking-widest ml-2">{errors.startDate}</p>}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">End Date</label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={e => setEndDate(e.target.value)}
-                    className={`w-full px-3 py-2.5 border rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 ${errors.endDate ? 'border-red-300' : 'border-slate-200'}`}
-                  />
-                  {errors.endDate && <p className="text-xs text-red-500 mt-1">{errors.endDate}</p>}
+                <div className="space-y-1.5">
+                  <label className="text-[8px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] ml-2">End</label>
+                  <DatePicker selected={endDate} onChange={setEndDate} placeholderText="End date" className={errors.endDate ? 'border-rose-500' : ''} />
+                  {errors.endDate && <p className="text-[8px] font-black text-rose-500 uppercase tracking-widest ml-2">{errors.endDate}</p>}
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Reason</label>
+              <div className="space-y-1.5">
+                <label className="text-[8px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] ml-2">Justification</label>
                 <textarea
                   value={reason}
                   onChange={e => setReason(e.target.value)}
-                  rows={3}
-                  placeholder="Enter reason for leave"
-                  className={`w-full px-3 py-2.5 border rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 resize-none ${errors.reason ? 'border-red-300' : 'border-slate-200'}`}
+                  rows={2}
+                  placeholder="Justification Narrative..."
+                  className={`glass-input w-full px-4 py-3 rounded-xl text-xs font-black tracking-tight resize-none placeholder:text-[var(--text-muted)] ${errors.reason ? 'border-rose-500' : ''}`}
                 />
-                {errors.reason && <p className="text-xs text-red-500 mt-1">{errors.reason}</p>}
+                {errors.reason && <p className="text-[8px] font-black text-rose-500 uppercase tracking-widest ml-2">{errors.reason}</p>}
               </div>
               <button
                 type="submit"
-                className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl transition-colors"
+                className="w-full py-4 premium-gradient text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl transition-all shadow-xl shadow-brand-red/10 flex items-center justify-center gap-2 active:scale-[0.98] ring-1 ring-white/10"
               >
-                Submit Request
+                <Send className="w-4 h-4" />
+                Transmit
               </button>
             </form>
           </div>
@@ -218,30 +202,40 @@ export default function EmployeeLeave() {
       )}
 
       {myLeaves.length === 0 ? (
-        <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
-          <Calendar className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-          <p className="text-slate-500">No leave requests yet</p>
+        <div className="glass-card rounded-[2rem] p-12 text-center border-[var(--card-border)] shadow-lg">
+          <div className="w-16 h-16 bg-black/5 dark:bg-white/5 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 border border-[var(--card-border)]">
+             <Calendar className="w-8 h-8 text-[var(--text-muted)]" />
+          </div>
+          <p className="text-[var(--text-muted)] font-black uppercase tracking-[0.2em] text-[10px]">Zero historical records</p>
         </div>
       ) : (
         <div className="space-y-3">
+          <h3 className="text-[8px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em] mb-1 ml-3">Archives</h3>
           {myLeaves.map(leave => {
             const statusLineColor = leave.status === 'approved' ? 'border-l-emerald-500' : 
                                   leave.status === 'rejected' ? 'border-l-rose-500' : 
                                   'border-l-amber-500';
             return (
-              <div key={leave.id} className={`bg-white rounded-2xl p-4 shadow-sm border border-slate-100 border-l-4 ${statusLineColor}`}>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">{typeLabel(leave.type)} Leave</span>
-                    <p className="text-sm text-slate-800 mt-1 font-semibold">{leave.reason}</p>
-                    <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {formatDate(leave.startDate)} to {formatDate(leave.endDate)}
-                    </p>
+              <div key={leave.id} className={`glass-card rounded-[1.5rem] p-5 border border-[var(--card-border)] border-l-[8px] hover:translate-x-1 transition-all duration-300 shadow-md group ${statusLineColor}`}>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1.5">
+                       <span className="text-[8px] font-black text-brand-red uppercase tracking-widest bg-brand-red/5 px-2 py-0.5 rounded border border-brand-red/10">{typeLabel(leave.type)}</span>
+                       <span className="text-[8px] font-black text-[var(--text-muted)] uppercase tracking-[0.1em]">Ref: {leave.id.slice(-4)}</span>
+                    </div>
+                    <p className="text-sm font-black text-[var(--text-main)] uppercase tracking-tight group-hover:text-brand-red transition-colors">{leave.reason}</p>
+                    <div className="flex items-center gap-2 mt-2 text-brand-red/60">
+                       <Calendar className="w-3 h-3" />
+                       <p className="text-[9px] font-black tabular-nums tracking-widest uppercase">
+                         {formatDate(leave.startDate)} <span className="opacity-30">/</span> {formatDate(leave.endDate)}
+                       </p>
+                    </div>
                   </div>
-                  <span className={`text-[10px] font-black px-2.5 py-1 rounded-full border uppercase tracking-wider ${statusColor(leave.status)}`}>
-                    {leave.status}
-                  </span>
+                  <div className="shrink-0">
+                    <span className={`text-[8px] font-black px-4 py-1.5 rounded-lg border uppercase tracking-widest shadow-sm block text-center ${statusColor(leave.status)}`}>
+                      {leave.status}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
@@ -250,10 +244,4 @@ export default function EmployeeLeave() {
       )}
     </div>
   );
-}
-
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '';
-  const [y, m, d] = dateStr.split('-');
-  return `${d}-${m}-${y}`;
 }

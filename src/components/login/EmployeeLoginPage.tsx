@@ -32,47 +32,47 @@ export default function EmployeeLoginPage() {
         className="full-bg transition-transform duration-1000 hover:scale-105 z-0"
         style={{ backgroundImage: `url(${employeeBG})` }}
       />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-tr from-emerald-900/40 via-transparent to-slate-900/40 backdrop-blur-[2px]" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-tr from-brand-dark/90 via-brand-dark/40 to-brand-red/20 backdrop-blur-[2px]" />
 
       <div className="w-full max-w-md relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl mb-4 border border-white/20 shadow-2xl">
-            <User className="w-10 h-10 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl mb-4 border border-white/20 shadow-2xl">
+            <User className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tight drop-shadow-lg">AttendX</h1>
-          <p className="text-emerald-50 font-medium mt-1 drop-shadow">Employee Portal</p>
+          <h1 className="text-4xl font-black text-white tracking-tight drop-shadow-lg uppercase italic">ATTENDANCE </h1>
+          <p className="text-rose-100/60 font-black text-[10px] uppercase tracking-[0.3em] mt-1 drop-shadow">Employee Division</p>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
-          <h2 className="text-2xl font-bold text-slate-800 mb-1">Welcome back</h2>
-          <p className="text-slate-500 text-sm mb-8">Sign in to your employee account</p>
+        <div className="bg-white/90 dark:bg-brand-dark/80 backdrop-blur-xl rounded-[2.5rem] p-10 shadow-2xl border border-white/20">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-1 uppercase tracking-tight">Access Portal</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-8">Identity Verification Required</p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Email Address</label>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Authentication ID</label>
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="aarav@company.com"
-                className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all"
+                className="w-full px-5 py-4 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red/50 transition-all font-black tracking-widest text-xs"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Password</label>
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Security Code</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all pr-12"
+                  className="w-full px-5 py-4 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red/50 transition-all pr-14 font-mono"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-emerald-600 transition-colors p-1"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-red transition-colors p-1.5"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -80,7 +80,7 @@ export default function EmployeeLoginPage() {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-red-600 text-sm font-medium animate-shake">
+              <div className="bg-brand-red/10 border border-brand-red/20 rounded-2xl px-5 py-3 text-brand-red text-[10px] font-black uppercase tracking-widest animate-shake">
                 {error}
               </div>
             )}
@@ -88,26 +88,26 @@ export default function EmployeeLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-600/20 active:scale-[0.98]"
+              className="w-full py-5 premium-gradient text-white font-black rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-red/20 active:scale-[0.98] uppercase tracking-[0.25em] text-[10px] ring-1 ring-white/20"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
                   <LogIn className="w-5 h-5" />
-                  Sign In
+                  Initialize
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+          <div className="mt-10 pt-8 border-t border-slate-100 dark:border-white/5 text-center">
             <Link
               to="/admin/login"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-emerald-600 transition-colors group"
+              className="inline-flex items-center gap-2 text-[9px] font-black text-slate-400 hover:text-brand-red transition-colors group uppercase tracking-[0.2em]"
             >
               <Shield className="w-4 h-4" />
-              Switch to Admin Login
+              Administrative Overrun
               <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
