@@ -14,7 +14,7 @@ export const employees: Employee[] = [
 const today = new Date().toISOString().split('T')[0];
 
 export const attendanceRecords: AttendanceRecord[] = [
-  { id: 'att1', employeeId: 'emp1', date: today, checkIn: '09:05', checkOut: null, latitude: 12.9716, longitude: 77.5946, status: 'present' },
+  // emp1 is not checked in yet to allow user to check in
   { id: 'att2', employeeId: 'emp2', date: today, checkIn: '09:15', checkOut: '18:30', latitude: 12.9716, longitude: 77.5946, status: 'present' },
   { id: 'att3', employeeId: 'emp3', date: today, checkIn: null, checkOut: null, latitude: null, longitude: null, status: 'absent' },
   { id: 'att4', employeeId: 'emp4', date: today, checkIn: null, checkOut: null, latitude: null, longitude: null, status: 'leave' },
