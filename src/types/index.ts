@@ -69,3 +69,27 @@ export interface AppSettings {
 
 export type EmployeeTab = 'home' | 'leave' | 'wfh' | 'expenses' | 'profile';
 export type AdminSection = 'dashboard' | 'employees' | 'leave-approvals' | 'wfh-approvals' | 'expense-approvals' | 'attendance-report' | 'leave-report' | 'expense-report' | 'settings';
+
+export interface AuthUser {
+  userId: number;
+  userTypeId: number;
+  username: string;
+  fullName: string;
+  role: string;
+  isLoggedIn: number;
+}
+
+export interface LoginResponse {
+  status: number;
+  message: string;
+  data: {
+    user: AuthUser;
+    token: string;
+  };
+}
+
+export interface ApiResponse<T> {
+  status: number;
+  message: string;
+  data: T;
+}

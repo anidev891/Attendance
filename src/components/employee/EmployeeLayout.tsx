@@ -93,10 +93,10 @@ export default function EmployeeLayout() {
             </div>
             <div>
               <p className="text-[10px] font-bold text-brand-red uppercase tracking-[0.2em] leading-none mb-1.5">
-                {activeTab === 'home' ? 'Personnel Dashboard' : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Protocols`}
+                {activeTab === 'home' || activeTab === 'employee' ? 'Personnel Dashboard' : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Protocols`}
               </p>
               <h1 className="text-base lg:text-xl font-bold text-[var(--text-main)] leading-none tracking-tight">
-                {activeTab === 'home' ? `Welcome, ${employee?.name}` : activeTab.toUpperCase()}
+                {activeTab === 'home' || activeTab === 'employee' ? `Hii, ${employee?.name}` : activeTab.toUpperCase()}
               </h1>
             </div>
           </div>

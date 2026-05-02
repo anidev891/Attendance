@@ -141,6 +141,32 @@ export default function EmployeeHome() {
     return h > 9 || (h === 9 && m > 30);
   }).length;
 
+  // Calculate Weekly Hours
+  const calculateWeeklyHours = () => {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    const day = now.getDay();
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Monday as start of week
+    startOfWeek.setDate(diff);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const weeklyRecords = employeeAttendance.filter(a => new Date(a.date) >= startOfWeek);
+    
+    let totalMinutes = 0;
+    weeklyRecords.forEach(record => {
+      if (record.checkIn && record.checkOut) {
+        const [hIn, mIn] = record.checkIn.split(':').map(Number);
+        const [hOut, mOut] = record.checkOut.split(':').map(Number);
+        totalMinutes += (hOut * 60 + mOut) - (hIn * 60 + mIn);
+      }
+    });
+
+    const hours = Math.floor(totalMinutes / 60);
+    return `${hours}hr/week`;
+  };
+
+  const weeklyHours = calculateWeeklyHours();
+
   return (
     <div className="p-4 space-y-6 animate-slide-up">
       {/* Hero Clock Card - Minimal Version */}
@@ -175,6 +201,11 @@ export default function EmployeeHome() {
               </span>
             )}
           </div>
+        </div>
+
+        <div className="absolute bottom-6 right-6 text-right">
+          <p className="text-[8px] font-black text-brand-red uppercase tracking-[0.2em] leading-none mb-1 opacity-60">Weekly Stats</p>
+          <p className="text-xl font-black text-brand-red tracking-tighter">{weeklyHours}</p>
         </div>
       </div>
 

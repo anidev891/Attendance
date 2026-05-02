@@ -30,7 +30,7 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function AdminLayout() {
-  const { logout } = useAuth();
+  const { employee, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -181,7 +181,7 @@ export default function AdminLayout() {
             </button>
             <div className="flex flex-col">
               <h1 className="text-xl font-bold text-[var(--text-main)] tracking-tight">
-                {menuItems.find(m => m.id === activeSection)?.label || 'Dashboard'}
+                {activeSection === 'dashboard' || activeSection === 'admin' ? `Hii, ${employee?.name}` : (menuItems.find(m => m.id === activeSection)?.label || 'Dashboard')}
               </h1>
               <p className="text-[10px] font-bold text-brand-red uppercase tracking-[0.2em] leading-none mt-1">Administrator Control Panel</p>
             </div>
